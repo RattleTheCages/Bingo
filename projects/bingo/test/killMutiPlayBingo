@@ -1,0 +1,16 @@
+#!/bin/ksh
+
+user=$USER
+user=dhuffman
+
+while [ 1 ]; do
+
+    kill -9 `ps -fu $user | grep "/testPlayBingo"  | cut -c9-14`;
+    kill -9 `ps -fu $user | grep "/pdaclient"  | cut -c9-14`;
+
+done;
+
+
+
+
+

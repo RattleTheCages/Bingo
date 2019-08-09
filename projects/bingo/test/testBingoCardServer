@@ -1,0 +1,10 @@
+#!/bin/ksh
+
+/home/dhuffman/projects/bingo/client 204.131.41.107 8845 '
+bingocard_o:
+bingocard_o.id=
+
+'
+
+
+

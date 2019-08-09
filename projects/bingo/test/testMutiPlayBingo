@@ -1,0 +1,17 @@
+#!/bin/ksh
+
+
+PHONEIDS="Phone1000x Phone1001x Phone1002x Phone1003x Phone1004x Phone1005x"
+#phone1006x phone1007x phone1008x phone1009x phone1010x phone1011x phone1012x \
+#phone1013x phone1014x phone1015x phone1016x phone1017x phone1018x phone1019x"
+
+
+for PH in $PHONEIDS; do
+
+./testPlayBingo $PH > /dev/null 2> /dev/null &
+
+sleep 14
+
+done;
+
+

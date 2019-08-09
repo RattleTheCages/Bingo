@@ -1,0 +1,14 @@
+#!/bin/ksh
+
+../client 204.131.41.107 8844 '
+gameRequest_o:
+gameRequest_o.id=1
+gameRequest_o.state=8884
+gameRequest_o.gameServer=
+gameRequest_o.game=BINGO
+gameRequest_o.gameid=1
+
+'
+
+
+

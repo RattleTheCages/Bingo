@@ -1,0 +1,654 @@
+/**  bingodealer.cc  ***********************************************************
+
+
+    bingodealer 0.008 server.
+
+
+changes log
+when        who    when
+9.18.99     Dan    Creation.
+
+
+*******************************************************************************/
+
+#define BINGODEALER_DEFAULT_PORT  8844
+
+#include <time.h>
+#include <signal.h>
+
+#include "../servers/bingodealer.h"
+
+
+#include "../../library/lib/string/string.h"
+#include "../../library/lib/memory/cache.h"
+#include "../../library/lib/log/log.h"
+#include "../../library/lib/other/sysinfo.h"
+#include "../../library/pserver/pserver.h"
+#include "../../library/sserver/telenet/client.h"
+#include "../managers/bingoSessionManager.h"
+#include "../hdml/hdmlInterface.h"
+#include "../html/htmlInterface.h"
+#include "../containers/pdaInput.h"
+#include "../containers/bingogame.h"
+#include "../containers/gameRequest.h"
+#include "../process/bingo.h"
+
+
+
+/**  **************************************************************************/
+
+log_o                 log;
+sysinfo_o             sysinfo;
+carapace_o            carapace;
+pserver_o*            pserver;
+hdmlInterface_o*      hdmlInterface;
+htmlInterface_o*      htmlInterface;
+bingoSessionManager_o*  bingoSessionManager;
+bingodealer_o         bingodealer;
+
+
+/**  **************************************************************************/
+
+
+int yeild()  {
+    unsigned long int x;
+    unsigned long int y;
+    unsigned long int z;
+
+    for(x=0;x<999999;x++)  {
+        y = y + x;
+        z = y + z + x;
+    }
+
+    z = y + x + 99;
+    y = z + 1;
+    return y;
+}
+
+
+bingodealer_o::bingodealer_o()  {
+    State = BINGODEALER_STATE_CLOSED;
+
+    CurrentGameId << 1;
+    NextGameId    << 2;
+
+    bingocallerthread = 0;
+
+    Id = "Bingo Dealer 1";
+}
+
+bingodealer_o::~bingodealer_o()  {}
+
+void bingodealer_o::operator >> (string_o& s) const  {
+    s << "\nbingodealer_o:";
+    s << '\n' << BINGODEALER_ID << '=' << Id;
+    s << '\n' << BINGODEALER_STATE << '=' << State;
+    s << '\n' << BINGODEALER_CURRENT_GAME_ID << '=' << CurrentGameId;
+    s << '\n';
+}
+
+
+int bingodealer_o::incrementGameId()  {
+    int x;
+
+    mutex.lock();
+        LastGameId = CurrentGameId;
+        CurrentGameId = NextGameId;
+
+        x = NextGameId.stoi();
+        x = x + 1;
+        (NextGameId = "") << x;
+
+
+        Bingogame.setId(CurrentGameId.string());
+    mutex.unlock();
+
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::htmlinput(input_o& input,output_o& output)  {
+    string_o page;
+    bingogame_o bg;
+
+    mutex.lock();
+        bg = Bingogame;
+    mutex.unlock();
+
+    ::htmlInterface->htmlMenu.page(bg,page);
+
+    yeild(); 
+
+    output.setMessage(page.string());
+   
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::pdainput(input_o& input,output_o& output)  {
+    string_o       message;
+    string_o       page;
+
+    bingoSession_o*  bingoSession;
+    pdaInput_o*    pdaInput;
+    output_o*      output2;
+
+
+    pdaInput = new pdaInput_o(input);
+    ::hdmlInterface->parse(*pdaInput);
+
+
+    bingoSession = ::bingoSessionManager->findSession(pdaInput->phone());
+    if(!bingoSession)  {
+        bingoSession = ::bingoSessionManager->newSession(pdaInput->phone());
+        ::bingoSessionManager->saveSession(bingoSession);
+        if(::log.debug(051))  {
+            (message = "") << ": new session: " << bingoSession->id();
+            ::log << message;
+        }
+    }
+    else  {
+        if(::log.debug(051))  {
+            (message = "") << ": found session: " << bingoSession->id();
+            ::log << message;
+        }
+    }
+
+
+    if(pdaInput->command().contains("newCards"))  {
+        if(State == BINGODEALER_STATE_PLAYING && CurrentGameId == bingoSession->joinedGameId())  {
+            (void)::hdmlInterface->hdmlViewCards.page(*bingoSession,page);
+        }
+        else  {
+            getNewPlayersCard(bingoSession->bingocard());
+
+            (void)::hdmlInterface->hdmlViewCards.page(*bingoSession,page);
+        }
+    }
+
+    else  if(pdaInput->command() == "viewCards")  {
+        if(bingoSession->bingocard().blank())  {
+            getNewPlayersCard(bingoSession->bingocard());
+        }
+
+        (void)::hdmlInterface->hdmlViewCards.page(*bingoSession,page);
+    }
+
+    else  if(pdaInput->command() == "viewAccount")  {
+        (void)::hdmlInterface->hdmlViewAccount.page(*bingoSession,page);
+    }
+
+    else  if(pdaInput->command() == "joinGame")  {
+        if(bingoSession->bingocard().blank())  {
+            getNewPlayersCard(bingoSession->bingocard());
+        }
+
+        (void)::hdmlInterface->hdmlJoinGame.page(*bingoSession,page);
+    }
+
+    else  if(pdaInput->command().contains("game"))  {
+
+        if(State == BINGODEALER_STATE_BINGO)  {
+            (void)::hdmlInterface->hdmlBingo.page(*bingoSession,page);
+        }
+
+        else  if(State == BINGODEALER_STATE_TAKING_BETS)  {
+            if(!(CurrentGameId == bingoSession->joinedGameId()))  {
+                bingoSession->setState(BINGOSESSION_STATE_PLAYING);
+                bingoSession->setJoinedGameId(CurrentGameId.string());
+
+                mutex.lock();
+                    Bingogame.addPlayer(bingoSession->id());
+                mutex.unlock();
+            }
+
+            (void)::hdmlInterface->hdmlTakingBets.page(*bingoSession,page);
+        }
+
+        else  if(State == BINGODEALER_STATE_PLAYING)  {
+
+            if(bingoSession->state() == BINGOSESSION_STATE_PLAYING)  {
+                if(!(CurrentGameId == bingoSession->joinedGameId()))  {
+                    bingoSession->setState(BINGOSESSION_STATE_NOT_PLAYING);
+                    mutex.lock();
+                        BingogameNext.addPlayer(bingoSession->id());
+                    mutex.unlock();
+                    (void)::hdmlInterface->hdmlInProgress.page(*bingoSession,page);
+                }
+                else  {
+                    (void)::hdmlInterface->hdmlGame.page(*bingoSession,page);
+                }
+            }
+            else  {
+                (void)::hdmlInterface->hdmlInProgress.page(*bingoSession,page);
+            }
+
+        }
+
+        else  if(State == BINGODEALER_STATE_CLOSED)  {
+            (void)::hdmlInterface->hdmlClosed.page(*bingoSession,page);
+        }
+    }
+
+    else  {
+        (void)::hdmlInterface->hdmlMenu.page(*bingoSession,page);
+    }
+
+    output2 = new output_o(&input);
+    output2->setMessage(page);
+    pserver->outputQueue(output2);
+    output.setInvalidCode(1); 
+
+
+    delete pdaInput;
+
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::getNewPlayersCard(bingocard_o& bingocard)  {
+    string_o message;
+    string_o ss;
+    string_o rs;
+    client_o client;
+
+//!@@@@!!!!!!!!!!
+mutex.lock();//!!
+    bingocard >> ss;
+mutex.unlock();//!!
+
+mutexC.lock();//!!
+    client.connect("204.131.41.107",8845);
+    client.send(ss.string());
+  //  ::usleep(2222);
+    client.recv(rs);
+    if(!rs.contains("\n\n"))  {
+      //  ::usleep(22222);
+        client.recv(rs);
+    }
+mutexC.unlock();//!!
+
+mutex.lock();//!!
+    bingocard << rs.string();
+mutex.unlock();//!!
+
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::checkCard(bingocard_o& bingocard)  {
+    int x;
+    for(x=0;x<5;x++)  {
+        mutex.lock();
+            if(Bingogame[bingocard.B[x]])  bingocard.Bx[x] = 1;
+            if(Bingogame[bingocard.I[x]])  bingocard.Ix[x] = 1;
+            if(Bingogame[bingocard.N[x]])  bingocard.Nx[x] = 1;
+            if(Bingogame[bingocard.G[x]])  bingocard.Gx[x] = 1;
+            if(Bingogame[bingocard.O[x]])  bingocard.Ox[x] = 1;
+        mutex.unlock();
+    }
+
+    // Four Corners.
+
+    if(bingocard.Bx[0] == 1 &&
+       bingocard.Bx[4] == 1 &&
+       bingocard.Ox[0] == 1 &&
+       bingocard.Ox[4] == 1)  {
+string_o s;
+bingocard >> s;
+cout<<s<<endl;
+
+        return  BINGO();
+    }
+
+
+    return 0;
+}
+
+int bingodealer_o::clearCard(bingocard_o& bingocard)  {
+    int x;
+    mutex.lock();
+        for(x=0;x<5;x++)  {
+            bingocard.Bx[x] = 0;
+            bingocard.Ix[x] = 0;
+            bingocard.Nx[x] = 0;
+            bingocard.Gx[x] = 0;
+            bingocard.Ox[x] = 0;
+        }
+        bingocard.Nx[2] = 1; //Free!
+    mutex.unlock();
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::BINGO()  {
+    string_o message;
+    mutex.lock();
+        State = BINGODEALER_STATE_BINGO;
+        Bingogame.setState(BINGOGAME_STATE_COMPLETE);
+    mutex.unlock();
+    if(::log.debug(71))  {
+        (message = "") << "State changed to " << BINGODEALER_STATE_BINGO;
+        message << " BINGODEALER_STATE_BINGO.";
+        ::log << message;
+    }
+
+    return BINGODEALER_STATE_BINGO;
+}
+
+int bingodealer_o::markPlayersCards()  {
+    int           win;
+    bingoSession_o* bingoSession;
+    cacheSearch_o<bingoSession_o>* cs;
+    cs = new cacheSearch_o<bingoSession_o>(&::bingoSessionManager->bingoSessions);
+
+    if(cs)  {
+
+        bingoSession = cs->listhead();
+        while(bingoSession)  {
+
+            if(CurrentGameId == bingoSession->joinedGameId())  {
+                cout<<"Playing:"<<bingoSession->id()<<endl;
+                win = checkCard(bingoSession->bingocard());
+                if(win == BINGODEALER_STATE_BINGO)  {
+                    cout<<"BINGO  :"<<bingoSession->id()<<endl;
+                 
+                }
+            }
+            else  {
+                cout<<"Not Ply:"<<bingoSession->id()<<endl;
+            }
+
+            bingoSession = cs->listnext();
+        }
+    }
+    else  {
+        // no one is playing?
+    }
+
+    delete cs;
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::clearPlayersCards()  {
+    bingoSession_o* bingoSession;
+    cacheSearch_o<bingoSession_o>* cs;
+    cs = new cacheSearch_o<bingoSession_o>(&::bingoSessionManager->bingoSessions);
+
+    mutex.lock();
+        State = BINGODEALER_STATE_CLEARING;
+    mutex.unlock();
+
+    if(cs)  {
+        bingoSession = cs->listhead();
+        while(bingoSession)  {
+            clearCard(bingoSession->bingocard());
+
+            bingoSession = cs->listnext();
+        }
+    }
+    else  {
+        // no one is playing?
+    }
+
+    delete cs;
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::pitbossinput(input_o& input,output_o& output)  {
+    string_o      message;
+    string_o      ss;
+    gameRequest_o gamerequest;
+
+    gamerequest << input.message().string();
+
+    if(gamerequest.state() == GAMEREQUEST_STATE_CLOSE)  {
+        mutex.lock();
+            State = BINGODEALER_STATE_CLOSED;
+            NextGameId = "";
+        mutex.unlock();
+        if(::log.debug(71))  {
+            (message = "") << "State changed to " << BINGODEALER_STATE_CLOSED;
+            message << " BINGODEALER_STATE_CLOSED.";
+            ::log << message;
+        }
+    }
+    else  if(gamerequest.state() == GAMEREQUEST_STATE_TAKE_BETS)  {
+        mutex.lock();
+            State = BINGODEALER_STATE_TAKING_BETS;
+        mutex.unlock();
+        if(::log.debug(71))  {
+            (message = "") << "State changed to " << BINGODEALER_STATE_TAKING_BETS;
+            message << " BINGODEALER_STATE_TAKING_BETS.";
+            ::log << message;
+        }
+    }
+    else  if(gamerequest.state() == GAMEREQUEST_STATE_START)  {
+
+        clearPlayersCards();
+        if(::log.debug(61))  {
+            (message = "") << "Cleared player's bingo cards.";
+            ::log << message;
+        }
+
+        mutex.lock();
+            State = BINGODEALER_STATE_PLAYING;
+        mutex.unlock();
+        if(::log.debug(71))  {
+            (message = "") << "State changed to " << BINGODEALER_STATE_PLAYING;
+            message << " BINGODEALER_STATE_PLAYING.";
+            ::log << message;
+        }
+    }
+    else  if(gamerequest.state() == GAMEREQUEST_STATE_VOID)  {
+        mutex.lock();
+            State = BINGODEALER_STATE_VOID;
+        mutex.unlock();
+        if(::log.debug(71))  {
+            (message = "") << "State changed to " << BINGODEALER_STATE_VOID;
+            message << " BINGODEALER_STATE_VOID.";
+            ::log << message;
+        }
+    }
+
+
+    (*this) >> ss;
+    output.setMessage(ss.string());
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::bingocallerinput(input_o& input,output_o& output)  {
+    string_o message;
+    string_o s;
+
+    bingogame_o bg;
+
+    mutex.lock();
+        if(bingocallerthread > 0)  {
+            (message = "") << "Multipule bingocallers attempting calls ";
+            message << bingocallerthread << ".";
+            ::log.error(message);
+        }
+        bingocallerthread = bingocallerthread + 1;
+
+        if(State == BINGODEALER_STATE_PLAYING)  {
+        }
+        else  {
+            (message = "") << "A bingocaller is calling a non-playing game.";
+            ::log.error(message);
+        }
+    mutex.unlock();
+      
+        
+    bg << input.message().string(); 
+    if(bg.state() != BINGOGAME_STATE_IN_PROGRESS)  {
+        if(::log.debug(54))  {
+            (message = "") << "bingocaller sent game not in progress.";
+            ::log << message;
+        }
+    }
+    else  {
+
+        mutex.lock();
+            Bingogame << input.message().string();
+        mutex.unlock();
+
+        if(::log.debug(55))  {
+            (message = "") << "bingocaller sent in progress game.";
+            ::log << message;
+        }
+    }
+
+
+    markPlayersCards();
+
+
+    s =  "";
+    mutex.lock();
+        Bingogame >> s;
+    mutex.unlock();
+    output.setMessage(s.string());
+
+    if(Bingogame.complete() || State == BINGODEALER_STATE_BINGO)  {
+        bingogameComplete();
+    }
+
+
+    mutex.lock();
+        bingocallerthread = bingocallerthread - 1;
+    mutex.unlock();
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::process(input_o& input,output_o& output)  {
+    string_o    s;
+    string_o    message;
+
+    if(input.message() == "RequestGame")  {
+        if(State == BINGODEALER_STATE_PLAYING)  {
+            mutex.lock();
+                Bingogame >> s;
+            mutex.unlock();
+        }
+        else  {
+            BingogameFinal >> s;
+        }
+
+        output.setMessage(s.string());
+    }
+    else if(input.message().contains("gameRequest_o:"))  {
+        pitbossinput(input,output);
+    }
+    else if(input.message().contains("BingoCaller_"))  {
+        bingocallerinput(input,output);
+    }
+    else if((input.message().contains("x-up-sub")) || (input.message().contains("x-UP-SubNo")))  {//!!
+        pdainput(input,output);
+    }
+    else  {
+        htmlinput(input,output);
+    }
+
+
+    return ERROR_OK;
+}
+
+int bingodealer_o::bingogameComplete()  {
+
+    mutex.lock();
+
+        BingogameFinal = Bingogame;
+        Bingogame.clear();
+    mutex.unlock();
+
+    incrementGameId();
+
+    return ERROR_OK;
+}
+
+
+int carapace_o::process(input_o& input,output_o& output)  {
+    return bingodealer.process(input,output);
+}
+
+void sighand(int sig)  {
+cerr<<sig<<endl;
+cerr<<"SIGARLM"<<endl;
+}
+
+int main(int argc,char* argv[])  {
+int x;
+int rcode;
+string_o message;
+
+signal(SIGALRM,sighand);
+
+
+thread_o* bthread = new thread_o(888,"Bingo Caller Thread");
+bingo_o* bingo;
+
+bingo = new bingo_o(*bthread);
+
+
+    ::log.registerName(argv[0]);
+
+
+
+//    for(x=0;x<1024;x++)   ::log.setDebugLevel(x);
+    for(x=0;x<100;x++)  ::log.setDebugLevel(x);
+
+::pserver = new pserver_o;
+
+/**  Instanciate the HDML Interface Object.  ***********************************/
+
+    if(0)
+        ::log << "Instanciate HDML Interface Object attempt.";
+    ::hdmlInterface = new hdmlInterface_o();
+    if(!::hdmlInterface)  {
+        //(void)::log.lerror("main: new hdmlInterface_o returned null.");
+        return -1;
+    }
+    if(0)  ::log << "Instanciated the HDML Interface Object.";
+
+    if(0)
+        ::log << "Instanciate HDML Interface Object attempt.";
+    ::htmlInterface = new htmlInterface_o();
+    if(!::htmlInterface)  {
+        //(void)::log.lerror("main: new hdmlInterface_o returned null.");
+        return -1;
+    }
+    if(0)  ::log << "Instanciated the HDML Interface Object.";
+
+
+/**  Instanciate the sessionManager_o Object.  ********************************/
+
+    if(0)
+        ::log << "Instanciate bingoSessionManager_o Object attempt.";
+    ::bingoSessionManager = new bingoSessionManager_o();
+    if(!::bingoSessionManager)  {
+        //(void)::log.lerror("main: new bingoSessionManager_o returned null.");
+        return -1;
+    }
+    if(0)  ::log << "Instanciated the bingoSessionManager_o Object.";
+
+
+
+
+    rcode = ::pserver->serveport(BINGODEALER_DEFAULT_PORT);
+    if(rcode != ERROR_OK)  return rcode;
+
+
+//bingo->start((::callbingo),bingo);
+
+    ::pserver->persist();
+
+    ::pthread_exit(NULL);
+}
+
+
+/******************************************************************************/
+

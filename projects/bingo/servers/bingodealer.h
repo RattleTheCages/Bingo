@@ -1,0 +1,124 @@
+/**  bingodealer.h  ************************************************************
+
+    Bingo Dealer Object.
+
+
+changes log:
+when       who     what
+9.19.99    Dan     Creation. 
+9.22.99    Dan     Added:    Communications to pitboss.
+
+*******************************************************************************/
+
+
+#ifndef BINGODEALEROBJECT_API
+#define BINGODEALEROBJECT_API
+
+#include "../../library/lib/string/string.h"
+#include "../../library/lib/thread/mutex.h"
+#include "../../library/pserver/carapace/carapace.h"
+
+#include "../containers/bingogame.h"
+#include "../containers/bingocard.h"
+#include "../containers/gameRequest.h"
+
+
+#define BINGODEALER_ID              "bingodealer_o.Id"
+#define BINGODEALER_STATE           "bingodealer_o.state"
+#define BINGODEALER_CURRENT_GAME_ID "bingodealer_o.currentGameId"
+
+
+#define BINGODEALER_STATE_CLOSED                            8520
+#define BINGODEALER_STATE_TAKING_BETS                       8522
+#define BINGODEALER_STATE_PLAYING                           8524
+#define BINGODEALER_STATE_VOID                              8526
+#define BINGODEALER_STATE_CLEARING                          8527
+#define BINGODEALER_STATE_BINGO                             8529
+
+
+class bingodealer_o  {
+  private:
+    mutex_o     mutex;
+    mutex_o     mutexC;
+    int         bingocallerthread;
+
+    string_o    PitBoss;
+
+  protected:
+    string_o    Id;
+    int         State;
+    bingogame_o Bingogame;
+    bingogame_o BingogameFinal;
+    bingogame_o BingogameNext;
+    string_o    LastGameId;
+    string_o    CurrentGameId;
+    string_o    NextGameId;
+
+
+  public:   
+    bingodealer_o();                                    // Default constructor.
+    bingodealer_o(const bingodealer_o&);                // Copy constructor.
+   ~bingodealer_o();                                    // Default destructor.
+    bingodealer_o&  operator =  (const bingodealer_o&); // Assignment operator.
+    void            operator >> (string_o&) const;      // Node-Value.
+
+
+          int       process(input_o&,output_o&);
+          int       pdainput(input_o&,output_o&);
+          int       pitbossinput(input_o&,output_o&);
+          int       htmlinput(input_o&,output_o&);
+          int       bingocallerinput(input_o&,output_o&);
+          int       markPlayersCards();
+          int       clearPlayersCards();
+          int       checkCard(bingocard_o&);
+          int       clearCard(bingocard_o&);
+          int       getNewPlayersCard(bingocard_o&);
+          int       bingogameComplete();
+          int       BINGO();
+
+          int       state()                     const;
+    const char*     pitboss()                   const;
+
+    const char*     lastGameId()                const;
+    const char*     currentGameId()             const;
+    const char*     nextGameId()                const;
+    const char*     id()                        const;
+          int       incrementGameId();
+          int       numberOfPlayers()           const;
+};
+
+
+/******************************************************************************/
+
+inline int bingodealer_o::state() const  {
+    return  State;
+}
+
+inline int bingodealer_o::numberOfPlayers() const  {
+    return  Bingogame.numberOfPlayers();
+}
+
+inline const char* bingodealer_o::id() const  {
+    return  Id.string();
+}
+
+inline const char* bingodealer_o::pitboss() const  {
+    return  PitBoss.string();
+}
+
+inline const char* bingodealer_o::lastGameId() const  {
+    return  LastGameId.string();
+}
+
+inline const char* bingodealer_o::currentGameId() const  {
+    return  CurrentGameId.string();
+}
+
+inline const char* bingodealer_o::nextGameId() const  {
+    return  NextGameId.string();
+}
+
+
+#endif
+
+/******************************************************************************/

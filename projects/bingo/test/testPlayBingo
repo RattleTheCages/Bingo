@@ -1,0 +1,27 @@
+#!/bin/ksh
+
+
+
+PID=$1
+
+
+
+../pdaclient 204.131.41.107 8844 $PID menu
+
+sleep 4
+
+../pdaclient 204.131.41.107 8844 $PID ~~input_o:~command=joinGame
+
+
+while [ 1 ]; do
+
+sleep 4
+
+../pdaclient 204.131.41.107 8844 $PID ~~input_o:~command=game
+
+sleep 4;
+
+
+done;
+
+

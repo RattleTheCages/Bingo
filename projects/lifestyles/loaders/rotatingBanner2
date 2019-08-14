@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+./client 204.131.41.107 4111 "rotatingBanner_o:
+rotatingBanner_o.id=BannerSet-X
+rotatingBanner_o.logourl=http://www.infomechanics.com/~dhuffman/images/lifestyles/logo1.jpg
+rotatingBanner_o.numberOfBanners=3
+rotatingBanner_o.bannerurl[0]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellscape2.jpg
+rotatingBanner_o.bannerurl[1]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellscape3.jpg
+rotatingBanner_o.bannerurl[2]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellscape4.jpg
+rotatingBanner_o.bannerurl[3]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellscape1.jpg
+rotatingBanner_o.backgroundurl[0]=http://www.infomechanics.com/~dhuffman/images/10_black_bathingsuit.jpg
+rotatingBanner_o.backgroundurl[1]=http://www.infomechanics.com/~dhuffman/images/11_snake_bathingsuit.jpg
+rotatingBanner_o.backgroundurl[2]=http://www.infomechanics.com/~dhuffman/images/1_stockings.jpg
+rotatingBanner_o.backgroundurl[3]=http://www.infomechanics.com/~dhuffman/images/5_pants.jpg
+rotatingBanner_o.frequency[0]=0.25
+rotatingBanner_o.frequency[1]=0.25
+rotatingBanner_o.frequency[2]=0.25
+rotatingBanner_o.frequency[3]=0.25
+
+"
+
+

@@ -1,0 +1,664 @@
+#!/bin/ksh
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=All
+service_o.class=Activity
+service_o.name=Messages
+service_o.url=http://204.131.41.107:4111/Messages
+service_o.desc=Messages or pages sent to this PDA
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=All
+service_o.class=Information
+service_o.name=News
+service_o.url=http://204.202.137.120/index.hdml
+service_o.desc=ABC News
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=All
+service_o.class=Activity
+service_o.name=Pager_Briefcase
+service_o.url=http://
+service_o.desc=Your Pager Briefcase
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=All
+service_o.class=Activity
+service_o.name=Pager_Pillbox
+service_o.url=http://
+service_o.desc=Your Pager Pillbox
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=All
+service_o.class=Activity
+service_o.name=Voice_Mail
+service_o.url=
+service_o.desc=Voice Mail
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Home
+service_o.class=Information
+service_o.name=Weather_atHome
+service_o.url=http://204.131.41.107:4111/Weather_atHome
+service_o.desc=Your local weather report
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Home
+service_o.class=Activity
+service_o.name=Email_atHome
+service_o.url=
+service_o.desc=Home Email
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Home
+service_o.class=Information
+service_o.name=Phone_Numbers_atHome
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/blackx.pl
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Home
+service_o.class=Activity
+service_o.name=Bookmarks_atHome
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Home
+service_o.class=Information
+service_o.name=TV_Listing
+service_o.url=http://209.67.104.160
+service_o.desc=Festivals.com
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Home
+service_o.class=Activity
+service_o.name=Environment_Control
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/x10.cgi
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Information
+service_o.name=Weather_atWork
+service_o.url=http://204.131.41.107:4111/Weather_atWork
+service_o.desc=Your local weather report
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Work
+service_o.class=Activity
+service_o.name=Email_atWork
+service_o.url=
+service_o.desc=Business Email
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Information
+service_o.name=Phone_Numbers_atWork
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/blackx.pl
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Work
+service_o.class=Activity
+service_o.name=Bookmarks_atWork
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Activity
+service_o.name=Schedule
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/sched.pl
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Activity
+service_o.name=Dispatch
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/webconcreate.cgi
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Activity
+service_o.name=WebEstate
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~webestate/WebEstateProd.cgi
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Activity
+service_o.name=WebTek
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/ccdisp.cgi
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Activity
+service_o.name=WebRunner
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/webcourier.cgi
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Activity
+service_o.name=WebPaper
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/dpdemo.cgi
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Information
+service_o.name=InfoSpace.com
+service_o.url=http://phone.infospace.com
+service_o.desc=Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Information
+service_o.name=Who_Where
+service_o.url=http://www.whowhere.com
+service_o.desc=Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Information
+service_o.name=Inquisit
+service_o.url=http://www.inquisit.com
+service_o.desc=Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Work
+service_o.class=Information
+service_o.name=Reuters
+service_o.url=http://www.reuters.com
+service_o.desc=Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=Bloomberg
+service_o.url=http://www.bloomberg.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=Data_Broadcasting
+service_o.url=http://www.dbc.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=EuropeanInvestor
+service_o.url=www.europeaninvestor.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=Kleline
+service_o.url=http://www.kleline.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=News_Alert
+service_o.url=http://www.newsalert.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=OANDA
+service_o.url=http://www.oanda.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=OmniAlert
+service_o.url=http://www.OmniAlert.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=Quote.com
+service_o.url=http://www.quote.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=SmartServ
+service_o.url=http://www.smartserv.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Information
+service_o.name=TheStreet.com
+service_o.url=http://www.TheStreet.com
+service_o.desc=Financial Information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Financial
+service_o.class=Activity
+service_o.name=WebBroker
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/broker.cgi
+service_o.desc=Trade on your pager.
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Travel
+service_o.class=Information
+service_o.name=Driving_Directions
+service_o.url=http://www.mapquest.com/up-hdml/mqtogo.hdml
+service_o.desc=Map Quest
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Travel
+service_o.class=Information
+service_o.name=Local_Events
+service_o.url=http://209.67.104.160
+service_o.desc=Festivals.com
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Travel
+service_o.class=Information
+service_o.name=BizTravel.com
+service_o.url=http://www.biztravel.com
+service_o.desc=Flight information and more.
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Travel
+service_o.class=Information
+service_o.name=GES_S.A.
+service_o.url=www.geneva-now.ch
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Travel
+service_o.class=Information
+service_o.name=The_Trip.com
+service_o.url=www.thetrip.com
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Travel
+service_o.class=Information
+service_o.name=Traffic_Station
+service_o.url=http://www.trafficstation.com
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Travel
+service_o.class=Information
+service_o.name=Parking
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Travel
+service_o.class=Infomation
+service_o.name=City_Services
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Travel
+service_o.class=Infomation
+service_o.name=Ground_Transportation
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Travel
+service_o.class=PointOfSale
+service_o.name=Toll_Booth
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Travel
+service_o.class=Infomation
+service_o.name=Train_Info
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Information
+service_o.name=Sports
+service_o.url=http://espn.go.com/index.hdml
+service_o.desc=ESPN Sports
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Bingo
+service_o.url=http://204.131.41.107:8844
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=WebGolf
+service_o.url=http://www.infomechanics.com/cgi-bin/cgiwrap/~demo/webgolf.cgi
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Datanet_Marketing
+service_o.url=http://www.datanetms.com
+service_o.desc=Live sports information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=One-On-One_Sports
+service_o.url=http://www.1on1sports.com
+service_o.desc=Live sports information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=SportsFeed
+service_o.url=http://www.sportsfeed.com
+service_o.desc=Live sports information
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Digital_Bridges
+service_o.url=http://www.digitalbridges.com
+service_o.desc=Multiplayer interactive games for handhelds
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=ents24.com
+service_o.url=http://uk.ents24.com
+service_o.desc=Entertainment listings for the UK
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Restaurant_Guide
+service_o.url=http://futureaccess.com/rguide/rguide.htm
+service_o.desc=Future Access is the creator of the Internet Restaurant Guide
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=In_Fusio
+service_o.url=http://www.in-fusio.com
+service_o.desc=In Fusio is specialized in entertainment development, content, and services
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Ilico
+service_o.url=http://www.ilico.net
+service_o.desc=Lotto Info
+
+"
+
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Fun
+service_o.class=Information
+service_o.name=Movie_Listings
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Bar_Trivia
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Taxi_Call
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Fun
+service_o.class=Activity
+service_o.name=Fantasy_Football
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Fun
+service_o.class=SubAccount
+service_o.name=Off-On_Track_Betting
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Fun
+service_o.class=Information
+service_o.name=Yahoo
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=NonFunctioning
+service_o.life=Fun
+service_o.class=Information
+service_o.name=Fun_Bookmarks
+service_o.url=
+service_o.desc=
+
+"
+
+./client 204.131.41.107 4111 "service_o:
+service_o.type=WebSite
+service_o.life=Shopping
+service_o.class=Activity
+service_o.name=Vicinity_Corp
+service_o.url=http://www.vicinity.com
+service_o.desc=Retail and e-tail solutions
+
+"
+
+

@@ -1,0 +1,56 @@
+#!/bin/ksh
+
+echo  Starting lifestyleservers v0.014
+echo
+
+
+
+echo  Starting relegateserver.
+
+nohup ./relegateserver  > ./logs/relegateserver.log  2> ./logs/relegateserver.log   &
+echo
+echo
+
+sleep 1
+
+
+echo  Starting archiveserver.
+
+cd data
+nohup ../archiveserver  > ../logs/archiveserver.log  2> ../logs/archiveserver.log   &
+cd ..
+echo
+echo
+
+
+sleep 1
+
+
+
+
+echo  Starting Primary lifestyleserver.
+
+nohup ./lifestyleserver 2>> ./logs/lifestyleserver.log >> ./logs/lifestyleserver.log  &
+echo
+echo
+sleep 2
+
+
+
+#echo  Starting Redundant Backup lifestyleserver.
+
+#nohup ./lifestyleserver 2>> ./logs/lifestyleserver_redundant.log >> ./logs/lifestyleserver_redundant.log  &
+#echo
+#echo
+#sleep 2
+
+
+
+ps -fu dhuffman | grep rele
+ps -fu dhuffman | grep life
+ps -fu dhuffman | grep arch
+
+
+
+
+

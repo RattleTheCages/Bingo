@@ -1,0 +1,19 @@
+#!/bin/ksh
+
+./client 204.131.41.107 4111 "rotatingBanner_o:
+rotatingBanner_o.id=bannerSet1
+rotatingBanner_o.logourl=http://www.infomechanics.com/~dhuffman/images/lifestyles/logo1.jpg
+rotatingBanner_o.numberOfBanners=3
+rotatingBanner_o.bannerurl[0]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellscape2.jpg
+rotatingBanner_o.bannerurl[1]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellscape3.jpg
+rotatingBanner_o.bannerurl[2]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellscape4.jpg
+rotatingBanner_o.backgroundurl[0]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellbackground1.jpg
+rotatingBanner_o.backgroundurl[1]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellbackground1.jpg
+rotatingBanner_o.backgroundurl[2]=http://www.infomechanics.com/~dhuffman/images/lifestyles/cellbackground1.jpg
+rotatingBanner_o.frequency[0]=0.34
+rotatingBanner_o.frequency[1]=0.33
+rotatingBanner_o.frequency[2]=0.33
+
+"
+
+

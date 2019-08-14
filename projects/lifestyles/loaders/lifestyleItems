@@ -1,0 +1,45 @@
+#!/bin/ksh
+
+./client 204.131.41.107 4111 "lifestyleItem_o:
+lifestyleItem_o.type=
+lifestyleItem_o.name=Home
+lifestyleItem_o.desc=Home Lifestyle Menu
+
+"
+
+./client 204.131.41.107 4111 "lifestyleItem_o:
+lifestyleItem_o.type=
+lifestyleItem_o.name=Work
+lifestyleItem_o.desc=Work Lifestyle Menu
+
+"
+
+./client 204.131.41.107 4111 "lifestyleItem_o:
+lifestyleItem_o.type=
+lifestyleItem_o.name=Financial
+lifestyleItem_o.desc=Financial Lifestyle Menu
+
+"
+
+./client 204.131.41.107 4111 "lifestyleItem_o:
+lifestyleItem_o.type=
+lifestyleItem_o.name=Travel
+lifestyleItem_o.desc=Travel Lifestyle Menu
+
+"
+
+./client 204.131.41.107 4111 "lifestyleItem_o:
+lifestyleItem_o.type=
+lifestyleItem_o.name=Fun
+lifestyleItem_o.desc=Fun Lifestyle Menu
+
+"
+
+./client 204.131.41.107 4111 "lifestyleItem_o:
+lifestyleItem_o.type=
+lifestyleItem_o.name=Shopping
+lifestyleItem_o.desc=Shopping Lifestyle Menu
+
+"
+
+

@@ -1,0 +1,21 @@
+#!/bin/ksh
+
+
+files=`ls ../data`
+path=../data/
+
+
+
+for file in  $files;
+do
+
+echo  Loading: $file
+echo
+
+./client 204.131.41.3 4111  "`/usr/bin/cat $path$file`"
+
+
+done;
+
+
+
